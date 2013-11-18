@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using Core.Protocol;
 using NUnit.Framework;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -13,6 +14,29 @@ using Org.BouncyCastle.OpenSsl;
 
 namespace Tests
 {
+    class MyTlsClient : DefaultTlsClient
+    {
+        public override TlsAuthentication GetAuthentication()
+        {
+            return new MyTlsAuthentication();
+        }
+    }
+
+    // Need class to handle certificate auth
+    class MyTlsAuthentication : TlsAuthentication
+    {
+        public TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
+        {
+            // return client certificate
+            return null;
+        }
+
+        public void NotifyServerCertificate(Certificate serverCertificate)
+        {
+            // validate server certificate
+        }
+    }
+
     public class TlsClient : DefaultTlsClient
     {
         public override TlsAuthentication GetAuthentication() {
@@ -110,9 +134,15 @@ router-signature
 
         [Test]
         public void BouncyTls() {
-            var tcpClient = new TcpClient("24.134.8.214", 443);
+            var tcpClient = new TcpClient("78.223.70.181", 443);
             var tlsHandler = new TlsProtocolHandler(tcpClient.GetStream());
-            tlsHandler.Connect(new TlsClient());
+            tlsHandler.Connect(new MyTlsClient());
+
+            var cell = new VersionCell();
+            tlsHandler.Stream.Write(cell.ToArray(), 0, cell.ToArray().Length);
+
+            var buffer = new byte[10000];
+            var data = tlsHandler.Stream.Read(buffer, 0, buffer.Length);
         }
     }
 }
