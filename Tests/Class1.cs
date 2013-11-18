@@ -1,24 +1,25 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using NUnit.Framework;
-using OpenSSL.SSL;
-using OpenSSL.X509;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Tls;
 using Org.BouncyCastle.OpenSsl;
-using SslStream = OpenSSL.SSL.SslStream;
 
 namespace Tests
 {
+    public class TlsClient : DefaultTlsClient
+    {
+        public override TlsAuthentication GetAuthentication() {
+            return new LegacyTlsAuthentication(new AlwaysValidVerifyer());
+        }
+    }
+
     [TestFixture]
     public class Class1
     {
@@ -29,7 +30,7 @@ namespace Tests
             var webClient = new WebClient();
             var result = webClient.DownloadData(url);
             var str = Encoding.ASCII.GetString(result);
-            File.WriteAllText("X:\\data.txt", str);
+            File.WriteAllText("data.txt", str);
         }
 
         [Test]
@@ -108,61 +109,10 @@ router-signature
         }
 
         [Test]
-        public void ConnectTest()
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            var tcpClient = new TcpClient("178.24.64.33", 443);
-            
-//            using(var stream = tcpClient.GetStream())
-//            {
-//                var clientMessage = Encoding.ASCII.GetBytes("Client hello");
-//                stream.Write(clientMessage, 0, clientMessage.Length);
-//                var bufer = new byte[1000];
-//                var r = stream.Read(bufer, 0, bufer.Length);
-//            }
-
-//            return;
-
-            Console.WriteLine("Client connected.");
-            var sslStream = new SslStream(
-                tcpClient.GetStream(),
-                false,
-                new RemoteCertificateValidationHandler(ValidateServerCertificate),
-                null
-                );
-
-//            sslStream.SslProtocol = 
-            try
-            {
-                sslStream.AuthenticateAsClient("default");
-            }
-            catch (AuthenticationException e)
-            {
-                Console.WriteLine("Exception: {0}", e.Message);
-                if (e.InnerException != null)
-                {
-                    Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
-                }
-                Console.WriteLine("Authentication failed - closing the connection.");
-                tcpClient.Close();
-                return;
-            }
-        }
-
-        // The following method is invoked by the RemoteCertificateValidationDelegate. 
-        public static bool ValidateServerCertificate(
-              object sender,
-              X509Certificate certificate,
-              X509Chain chain,
-              int some, VerifyResult verifyResult)
-        {
-//            if (sslPolicyErrors == SslPolicyErrors.None)
-//                return true;
-
-            //Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
-
-            // Do not allow this client to communicate with unauthenticated servers. 
-            return false;
+        public void BouncyTls() {
+            var tcpClient = new TcpClient("24.134.8.214", 443);
+            var tlsHandler = new TlsProtocolHandler(tcpClient.GetStream());
+            tlsHandler.Connect(new TlsClient());
         }
     }
 }
