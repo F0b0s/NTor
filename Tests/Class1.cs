@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -10,6 +11,7 @@ using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Tls;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.OpenSsl;
 
 namespace Tests
@@ -143,6 +145,18 @@ router-signature
 
             var buffer = new byte[10000];
             var data = tlsHandler.Stream.Read(buffer, 0, buffer.Length);
+        }
+
+        [Test]
+        public void BI()
+        {
+            string value = @"00FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E08" + 
+                "8A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B" + 
+                "302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9" + 
+                "A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE6" + 
+                "49286651ECE65381FFFFFFFFFFFFFFFF";
+            var bi = System.Numerics.BigInteger.Parse(value, NumberStyles.HexNumber);
+            Assert.AreEqual(CreateCell.DH_modulus_p, bi);
         }
     }
 }
