@@ -19,7 +19,7 @@ namespace Core.Documents
         public string Port { get; set; }
     }
 
-    class RouterDescriptor
+    public class RouterDescriptor
     {
         public NetworkEntity NetworkEntity { get; set; }
 
