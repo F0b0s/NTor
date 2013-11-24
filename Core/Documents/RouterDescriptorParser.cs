@@ -6,20 +6,17 @@ namespace Core.Documents
 {
     public class RouterDescriptorParser
     {
-        //"router" nickname address ORPort SOCKSPort DirPort NL
         public static string OnionKeyPattern = @"onion-key[\s\n]+?(-----BEGIN RSA PUBLIC KEY-----[\w\W\n]+?-----END RSA PUBLIC KEY-----)";
         public static string SigningKeyPattern = @"signing-key[\s\n]+?(-----BEGIN RSA PUBLIC KEY-----[\w\W\n]+?-----END RSA PUBLIC KEY-----)";
         public static string NetworkEntityPattern = @"^router ([\w]+?) ([\S]+?) ([\d]+?) ([\d]+?) ([\d]+?)";
         public static string FingerprintPattern = @"fingerprint[\s\n]+?([\s\w]+?)\n";
         public static string NTorOnionKeyPattern = @"ntor-onion-key[\s\n]+?([\w\W]+?)\n";
-        public static string RouterPattern = @"(^router[\s\w\W\n]+)+";
 
-        private static Regex OnionKeyRegex = new Regex(OnionKeyPattern);
-        private static Regex SigningKeyRegex = new Regex(SigningKeyPattern);
-        private static Regex RouterDescriptionRegex = new Regex(NetworkEntityPattern);
-        private static Regex FingerPrintRegex = new Regex(FingerprintPattern);
-        private static Regex NTorOnionKeyRegex = new Regex(NTorOnionKeyPattern);
-        private static Regex RouterRegex = new Regex(RouterPattern);
+        private static readonly Regex OnionKeyRegex = new Regex(OnionKeyPattern);
+        private static readonly Regex SigningKeyRegex = new Regex(SigningKeyPattern);
+        private static readonly Regex RouterDescriptionRegex = new Regex(NetworkEntityPattern);
+        private static readonly Regex FingerPrintRegex = new Regex(FingerprintPattern);
+        private static readonly Regex NTorOnionKeyRegex = new Regex(NTorOnionKeyPattern);
         
         public static IEnumerable<RouterDescriptor> GetDescriptors(string textData) {
             if (string.IsNullOrEmpty(textData)) {
@@ -30,24 +27,18 @@ namespace Core.Documents
                 throw new ArgumentException("Bad document");
             }
 
-            var splittedByrouter = textData.Split(new[] {"router"}, StringSplitOptions.RemoveEmptyEntries);
-
-            if (splittedByrouter.Length == 0) {
-                throw new InvalidOperationException("No router descriptions has been found");
-            }
-            
             var routersDescriptions = new List<RouterDescriptor>();
+            var routers = textData.Split(new[] {"router "}, StringSplitOptions.RemoveEmptyEntries);
 
-            var routersMatch = RouterRegex.Match(textData);
-            if (!routersMatch.Success || routersMatch.Groups.Count <= 1)
+            if(routers.Length == 0)
             {
-                throw new InvalidOperationException("Can't find any routerDescriptions");
+                throw new InvalidOperationException("Bad document");
             }
 
-            for (int i = 1; i < routersMatch.Groups.Count; i++)
+            foreach (var router in routers)
             {
                 RouterDescriptor routerDescriptor;
-                if (ParseRouter(routersMatch.Groups[i].Value, out routerDescriptor))
+                if (ParseRouter("router " + router, out routerDescriptor))
                 {
                     routersDescriptions.Add(routerDescriptor);
                 }
@@ -70,13 +61,15 @@ namespace Core.Documents
                 TryGetSigningKey(routerDescriptionText, out signingKey) &&
                 TryGetFingerprint(routerDescriptionText, out fingerprint))
             {
-                routerDescriptor = new RouterDescriptor();
+                routerDescriptor = new RouterDescriptor
+                                       {
+                                           NetworkEntity = networkEntity,
+                                           OnionKey = publicKey,
+                                           NTorOnionKey = onionKey,
+                                           SigningKey = signingKey,
+                                           FingerPrint = fingerprint
+                                       };
 
-                routerDescriptor.NetworkEntity = networkEntity;
-                routerDescriptor.OnionKey = publicKey;
-                routerDescriptor.NTorOnionKey = onionKey;
-                routerDescriptor.SigningKey = signingKey;
-                routerDescriptor.FingerPrint = fingerprint;
                 return true;
             }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Text;
 using Core.Documents;
 using NUnit.Framework;
 
@@ -149,7 +151,17 @@ router-signature
             Assert.AreEqual(ExpectedFingerprint, actual.FingerPrint); 
             Assert.AreEqual(ExpectedSigningKey, actual.SigningKey);
             Assert.AreEqual(ExpectedNTorOnionKey, actual.NTorOnionKey);
+        }
 
+        [Test, Explicit]
+        public void ParseTest()
+        {
+            var url = "http://86.59.21.38:80/tor/server/all";
+            var webClient = new WebClient();
+            var result = webClient.DownloadData(url);
+            var str = Encoding.ASCII.GetString(result);
+
+            var routers = RouterDescriptorParser.GetDescriptors(str);
         }
     }
 }
