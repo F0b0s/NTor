@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Core.Documents
+﻿namespace Core.Documents
 {
     public class NetworkEntity
     {
@@ -27,9 +22,5 @@ namespace Core.Documents
         public string OnionKey { get; set; }
         public string NTorOnionKey { get; set; }
         public string SigningKey { get; set; }
-
-
-
-
     }
 }

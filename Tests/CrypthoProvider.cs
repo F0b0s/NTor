@@ -1,12 +1,14 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 using Core.Infrastructure;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
 
 namespace Tests
 {
     public class CrypthoProvider : ISymmetricalProvider
     {
-        RandomNumberGenerator randomNumberGenerator;
+        readonly RandomNumberGenerator randomNumberGenerator;
 
         public CrypthoProvider()
         {
@@ -20,11 +22,11 @@ namespace Tests
             return bytes;
         }
 
-        public byte[] AssymEncrypt(byte[] data)
+        public byte[] AssymEncrypt(byte[] data, byte[] modulus, byte[] exponent)
         {
             var rsaParams = new RSAParameters();
-            rsaParams.Modulus = null;
-            rsaParams.Exponent = null;
+            rsaParams.Modulus = modulus;
+            rsaParams.Exponent = exponent;
 
             var rsa = new RSACryptoServiceProvider();
             rsa.ImportParameters(rsaParams);
@@ -52,6 +54,24 @@ namespace Tests
                         return msEncrypt.ToArray();
                     }
                 }
+            }
+        }
+
+        public byte[] GetExponent(string key)
+        {
+            using (var textReader = new StringReader(key))
+            {
+                var keyPair = (RsaKeyParameters)new PemReader(textReader).ReadObject();
+                return keyPair.Exponent.ToByteArray();
+            }
+        }
+
+        public byte[] GetModulus(string key)
+        {
+            using (var textReader = new StringReader(key))
+            {
+                var keyPair = (RsaKeyParameters)new PemReader(textReader).ReadObject();
+                return keyPair.Modulus.ToByteArray();
             }
         }
     }
