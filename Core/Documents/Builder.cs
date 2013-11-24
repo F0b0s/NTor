@@ -16,8 +16,7 @@ namespace Core.Documents
 
             var authority = authories.First();
             var data = loader.GetroutersDescriptions(authority);
-            var parser = new RouterDescriptorParser();
-            var routerDescriptions = parser.GetDescriptors(data);
+            var routerDescriptions = RouterDescriptorParser.GetDescriptors(data);
 
 
         }
