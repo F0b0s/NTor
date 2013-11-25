@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 using Core.Infrastructure;
+using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
 
@@ -20,6 +22,30 @@ namespace Tests
             var bytes = new byte[len];
             randomNumberGenerator.GetBytes(bytes);
             return bytes;
+        }
+
+        public byte[] AssymEncrypt(byte[] data, string pemPublicKey, int @from, int len)
+        {
+            var pemReader = new PemReader(new StringReader(pemPublicKey));
+            var parameters = (RsaKeyParameters)pemReader.ReadObject();
+
+            var rsa = new RsaEngine();
+            var oaep = new OaepEncoding(rsa);
+            oaep.Init(true, parameters);
+
+            return oaep.ProcessBlock(data, @from, len);
+        }
+
+        public int GetBlockSizeForKey(string pemPublicKey)
+        {
+            var pemReader = new PemReader(new StringReader(pemPublicKey));
+            var parameters = (RsaKeyParameters)pemReader.ReadObject();
+
+            var rsa = new RsaEngine();
+            var oaep = new OaepEncoding(rsa);
+            oaep.Init(true, parameters);
+
+            return oaep.GetInputBlockSize();
         }
 
         public byte[] AssymEncrypt(byte[] data, byte[] modulus, byte[] exponent)

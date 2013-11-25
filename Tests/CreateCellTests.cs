@@ -1,10 +1,6 @@
-﻿using System.IO;
-using System.Linq;
-using Core.Documents;
+﻿using System.Linq;
 using Core.Protocol;
 using NUnit.Framework;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
 
 namespace Tests
 {
