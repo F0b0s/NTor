@@ -135,19 +135,6 @@ router-signature
         }
 
         [Test]
-        public void BouncyTls() {
-            var tcpClient = new TcpClient("78.223.70.181", 443);
-            var tlsHandler = new TlsProtocolHandler(tcpClient.GetStream());
-            tlsHandler.Connect(new MyTlsClient());
-
-            var cell = new VersionCell();
-            tlsHandler.Stream.Write(cell.ToArray(), 0, cell.ToArray().Length);
-
-            var buffer = new byte[10000];
-            var data = tlsHandler.Stream.Read(buffer, 0, buffer.Length);
-        }
-
-        [Test]
         public void BI()
         {
             string value = @"00FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E08" + 

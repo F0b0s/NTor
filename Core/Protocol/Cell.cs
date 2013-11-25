@@ -1,21 +1,36 @@
-﻿namespace Core.Protocol
+﻿using System;
+
+namespace Core.Protocol
 {
     public abstract class Cell
     {
-        public abstract byte[] ToArray();
-    }
+        private readonly byte commandType;
 
-    public class VersionCell : Cell
-    {
-        public override byte[] ToArray() {
-            return new byte[]{0x00, 0x00, 0x07, 0x00, 0x02, 0x00, 0x02};
+        protected Cell(byte commandType)
+        {
+            this.commandType = commandType;
         }
-    }
 
-    public class NetInfoCell : Cell
-    {
-        public override byte[] ToArray() {
-            return new byte[]{0x00, 0x00, 0x08,     0x00, 0x00, 0x00, 0x00   };
+        protected abstract byte[] GetPayload();
+        
+        public byte[] ToArray()
+        {
+            var payload = GetPayload();
+
+            if(payload.Length > CellCommands.CELL_PAYLOAD_SIZE)
+            {
+                var message = string.Format("Payload size exceeds, max value '{0}', actual '{1}'",
+                                            CellCommands.CELL_PAYLOAD_SIZE, payload.Length);
+                throw new ArgumentOutOfRangeException(message);
+            }
+
+            var result = new byte[CellCommands.CELL_TOTAL_SIZE];
+
+            result[1] = 7; // TODO: CircId should be choosed correctly
+            result[CellCommands.CELL_COMMAND_POS] = commandType;
+            Array.Copy(payload, 0, result, CellCommands.CELL_PAYLOAD_POS, payload.Length);
+            
+            return result;
         }
     }
 }

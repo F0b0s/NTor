@@ -13,15 +13,15 @@ namespace Core.Protocol
 
         private readonly ISymmetricalProvider symmetricalProvider;
 
-        public CreateCell(RouterDescriptor routerDescriptor, ISymmetricalProvider symmetricalProvider)
+        public CreateCell(RouterDescriptor routerDescriptor, ISymmetricalProvider symmetricalProvider) : base(CellCommands.CELL_CREATE)
         {
             this.routerDescriptor = routerDescriptor;
             this.symmetricalProvider = symmetricalProvider;
         }
 
-        public override byte[] ToArray()
+        protected override byte[] GetPayload()
         {
-            byte[] data = new byte[144];
+            var data = new byte[144];
             var symmetricKey = symmetricalProvider.GenerateKey(16);
 
             var dh_g = new BigInteger(2);

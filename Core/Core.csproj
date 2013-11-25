@@ -46,6 +46,7 @@
     <Compile Include="Infrastructure\ISymmetricalProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\Cell.cs" />
+    <Compile Include="Protocol\CellCommands.cs" />
     <Compile Include="Protocol\CreateCell.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
