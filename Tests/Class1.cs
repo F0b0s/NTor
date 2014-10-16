@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Core.Protocol;
 using NUnit.Framework;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -33,18 +34,26 @@ namespace Tests
             return null;
         }
 
+//        public void processServerCertificate(Certificate serverCertificate) 
+//        {
+//            SubjectPublicKeyInfo subPubKeyInfo = serverCertificate.GetCerts()[0].TbsCertificate.SubjectPublicKeyInfo;
+//            RsaPublicKeyStructure pubKey = RsaPublicKeyStructure.GetInstance(subPubKeyInfo.GetPublicKey());
+//            
+//            //rsaServerPublicKey = new RSAKeyParameters(false,pubKey.getModulus(),pubKey.getPublicExponent());
+//        }
+
         public void NotifyServerCertificate(Certificate serverCertificate)
         {
             // validate server certificate
         }
     }
 
-    public class TlsClient : DefaultTlsClient
-    {
-        public override TlsAuthentication GetAuthentication() {
-            return new LegacyTlsAuthentication(new AlwaysValidVerifyer());
-        }
-    }
+//    public class TlsClient : DefaultTlsClient
+//    {
+//        public override TlsAuthentication GetAuthentication() {
+//            return new LegacyTlsAuthentication(new AlwaysValidVerifyer());
+//        }
+//    }
 
     [TestFixture]
     public class Class1

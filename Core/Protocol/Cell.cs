@@ -4,11 +4,11 @@ namespace Core.Protocol
 {
     public abstract class Cell
     {
-        private readonly byte commandType;
+        private readonly byte _commandType;
 
         protected Cell(byte commandType)
         {
-            this.commandType = commandType;
+            _commandType = commandType;
         }
 
         protected abstract byte[] GetPayload();
@@ -24,11 +24,14 @@ namespace Core.Protocol
                 throw new ArgumentOutOfRangeException(message);
             }
 
-            var result = new byte[CellCommands.CELL_TOTAL_SIZE];
+            var result = new byte[7];
 
-            result[1] = 7; // TODO: CircId should be choosed correctly
-            result[CellCommands.CELL_COMMAND_POS] = commandType;
-            Array.Copy(payload, 0, result, CellCommands.CELL_PAYLOAD_POS, payload.Length);
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = 7; 
+            result[3] = 0;
+            result[4] = 2;
+            Array.Copy(payload, 0, result, 5, payload.Length);
             
             return result;
         }

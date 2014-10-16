@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Documents\Builder.cs" />
+    <Compile Include="Documents\HardcodedAuthoritiesProvider.cs" />
     <Compile Include="Documents\IAuthoritiesProvider.cs" />
     <Compile Include="Documents\IRouterDescriptorLoader.cs" />
     <Compile Include="Documents\RouterDescriptor.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Protocol\Cell.cs" />
     <Compile Include="Protocol\CellCommands.cs" />
     <Compile Include="Protocol\CreateCell.cs" />
+    <Compile Include="Protocol\VersionCell.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

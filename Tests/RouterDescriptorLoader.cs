@@ -10,7 +10,7 @@ namespace Tests
 
         public static IEnumerable<RouterDescriptor> Load()
         {
-            var url = "http://86.59.21.38:80/tor/server/all";
+            var url = "http://194.109.206.212:80/tor/server/all";
             var webClient = new WebClient();
             var result = webClient.DownloadData(url);
             var str = Encoding.ASCII.GetString(result);
