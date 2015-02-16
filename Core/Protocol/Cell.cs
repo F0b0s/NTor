@@ -30,6 +30,11 @@ namespace Core.Protocol
             result[1] = 0;
             result[2] = _commandType;
             var payloadSize = BitConverter.GetBytes((ushort) payload.Length);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(payloadSize);
+            }
+
             Array.Copy(payloadSize, 0, result, 3, payloadSize.Length);
             Array.Copy(payload, 0, result, 5, payload.Length);
             

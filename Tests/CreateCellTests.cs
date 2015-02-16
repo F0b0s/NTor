@@ -24,7 +24,7 @@ namespace Tests
         public void Test()
         {
             var routers = RouterDescriptotLoader.Load();
-            foreach(var sample in routers.Where(x => x.NetworkEntity.Port == "443"))
+            foreach(var sample in routers.Where(x => x.NetworkEntity.Port == "443").Skip(1))
             {
                 try
                 {
@@ -36,7 +36,7 @@ namespace Tests
                     var tlsClient = new MyTlsClient();
                     tlsHandler.Connect(tlsClient);
 
-                    var createCell = new VersionsCell(new ushort[]{2, 3});
+                    var createCell = new VersionsCell(new ushort[]{3});
                     var buffer = createCell.ToArray();
                     tlsHandler.Stream.Write(buffer, 0, buffer.Length);
 

@@ -22,7 +22,12 @@ namespace Core.Protocol
                 var currentSize = payload.Length;
                 Array.Resize(ref payload, currentSize + 2);
 
-                Array.Copy(BitConverter.GetBytes(version), 0, payload, currentSize, 2);
+                var sourceArray = BitConverter.GetBytes(version);
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(sourceArray);
+                }
+                Array.Copy(sourceArray, 0, payload, currentSize, 2);
             }
 
             return payload;
@@ -38,7 +43,13 @@ namespace Core.Protocol
             var versions = new List<ushort>();
             for (var i = 0; i < array.Length; i+=2)
             {
-                versions.Add(BitConverter.ToUInt16(array, i));
+                var sourceArray = new byte[2];
+                Array.Copy(array, i, sourceArray, 0, 2);
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(sourceArray);
+                }
+                versions.Add(BitConverter.ToUInt16(sourceArray, 0));
             }
 
             return new VersionsCell(versions);

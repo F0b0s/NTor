@@ -16,7 +16,7 @@ namespace Tests.Protocol
         [Test]
         public void Ctor_PassSomeVersions_ShouldReturnCorrectPayload()
         {
-            var expected = new byte[] {0x00, 0x00, 0x07, 0x04, 0x00, 0x03, 0x00, 0x04, 0x00};
+            var expected = new byte[] {0x00, 0x00, 0x07, 0x00, 0x04, 0x00, 0x03, 0x00, 0x04};
             var versions = new ushort[] {3, 4};
             var versionsCell = new VersionsCell(versions);
 
@@ -28,7 +28,7 @@ namespace Tests.Protocol
         [Test]
         public void Parse_PassVersionsCell_ShouldBeParsed()
         {
-            var cellData = new byte[] { 0x03, 0x00, 0x04, 0x00 };
+            var cellData = new byte[] { 0x00, 0x03, 0x00, 0x04 };
             var expected = new ushort[] { 3, 4 };
             var versionsCell = VersionsCell.Parse(cellData);
 
