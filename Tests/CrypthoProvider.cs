@@ -10,17 +10,17 @@ namespace Tests
 {
     public class CrypthoProvider : ISymmetricalProvider
     {
-        readonly RandomNumberGenerator randomNumberGenerator;
+        readonly RandomNumberGenerator _randomNumberGenerator;
 
         public CrypthoProvider()
         {
-            randomNumberGenerator = new RNGCryptoServiceProvider();
+            _randomNumberGenerator = new RNGCryptoServiceProvider();
         }
 
         public byte[] GenerateKey(int len)
         {
             var bytes = new byte[len];
-            randomNumberGenerator.GetBytes(bytes);
+            _randomNumberGenerator.GetBytes(bytes);
             return bytes;
         }
 

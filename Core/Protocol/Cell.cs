@@ -17,20 +17,20 @@ namespace Core.Protocol
         {
             var payload = GetPayload();
 
-            if(payload.Length > CellCommands.CELL_PAYLOAD_SIZE)
+            if (payload.Length > CellCommands.CELL_PAYLOAD_SIZE)
             {
                 var message = string.Format("Payload size exceeds, max value '{0}', actual '{1}'",
-                                            CellCommands.CELL_PAYLOAD_SIZE, payload.Length);
+                    CellCommands.CELL_PAYLOAD_SIZE, payload.Length);
                 throw new ArgumentOutOfRangeException(message);
             }
 
-            var result = new byte[7];
+            var result = new byte[5 + payload.Length];
 
             result[0] = 0;
             result[1] = 0;
-            result[2] = 7; 
-            result[3] = 0;
-            result[4] = 2;
+            result[2] = _commandType;
+            var payloadSize = BitConverter.GetBytes((ushort) payload.Length);
+            Array.Copy(payloadSize, 0, result, 3, payloadSize.Length);
             Array.Copy(payload, 0, result, 5, payload.Length);
             
             return result;

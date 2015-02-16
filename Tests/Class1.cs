@@ -2,18 +2,16 @@
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Core.Protocol;
 using NUnit.Framework;
-using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Tls;
-using Org.BouncyCastle.Math;
 using Org.BouncyCastle.OpenSsl;
+using Certificate = Org.BouncyCastle.Crypto.Tls.Certificate;
 
 namespace Tests
 {
@@ -58,7 +56,7 @@ namespace Tests
     [TestFixture]
     public class Class1
     {
-        [Test]
+        [Test, Ignore]
         public void Test()
         {
             var url = "http://86.59.21.38:80/tor/server/all";

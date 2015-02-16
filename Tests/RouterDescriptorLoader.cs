@@ -7,7 +7,6 @@ namespace Tests
 {
     public class RouterDescriptotLoader
     {
-
         public static IEnumerable<RouterDescriptor> Load()
         {
             var url = "http://194.109.206.212:80/tor/server/all";
