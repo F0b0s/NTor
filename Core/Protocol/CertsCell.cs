@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Utils;
 
 namespace Core.Protocol
 {
@@ -30,7 +31,7 @@ namespace Core.Protocol
             for (int i = 0, index = 1; i < certsCount; i++)
             {
                 var certType = cellBytes[index];
-                var size = ReadUInt16(cellBytes[index + 1], cellBytes[index + 2]);
+                var size = ByteHelper.ReadInt16(cellBytes[index + 1], cellBytes[index + 2]);
                 var certBytes = new byte[size];
                 Array.Copy(cellBytes, index + 3, certBytes, 0, certBytes.Length);
                 index += 3 + certBytes.Length;
@@ -70,15 +71,6 @@ namespace Core.Protocol
             }
 
             return payload;
-        }
-
-        private static short ReadUInt16(byte first, byte second)
-        {
-            short value = 0;
-            value = (short) ((value | first) << 8);
-            value |= second;
-
-            return value;
         }
     }
 }

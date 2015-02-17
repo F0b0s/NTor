@@ -41,10 +41,11 @@ namespace Core.Protocol
                         var payload1 = new byte[payloadLen];
                         Array.Copy(response, currentIndex + 5, payload1, 0, payloadLen);
                         result.Add(CertsCell.Parse(payload1));
-                        //result.Add(ParseCertCell(response, currentIndex + 5, payloadLen));
                         break;
                     case 130:
-                        result.Add(ParseChallengeCell(response, currentIndex + 5, payloadLen));
+                        var payload2 = new byte[payloadLen];
+                        Array.Copy(response, currentIndex + 5, payload2, 0, payloadLen);
+                        result.Add(ChallengeCell.Parse(payload2));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(command.ToString(CultureInfo.InvariantCulture));
@@ -53,20 +54,6 @@ namespace Core.Protocol
             }
 
             return result;
-        }
-
-        private static Cell ParseChallengeCell(byte[] certCellBytes, int index, int cellSize)
-        {
-            var challenge = new byte[32];
-            Array.Copy(certCellBytes, index, challenge, 0, challenge.Length);
-            var methodsCount = ReadUInt16(certCellBytes, index + challenge.Length);
-
-            for (int i = 0; i < methodsCount; i++)
-            {
-                var method = ReadUInt16(certCellBytes, index + challenge.Length + 2 + 2 * i);
-            }
-
-            return new VersionsCell(new ushort[]{1});
         }
 
         private static short ReadUInt16(byte[] bytes, int index)

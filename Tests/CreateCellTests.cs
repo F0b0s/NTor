@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Core.Protocol;
 using NUnit.Framework;
 using Org.BouncyCastle.Crypto.Tls;
@@ -73,6 +74,10 @@ namespace Tests
 
             var cert = certcell.Certificates.First();
             var x509 = new X509Certificate2(cert.CertBytes);
+
+            var challengeCell = (ChallengeCell)result.FirstOrDefault(x => x.GetType() == typeof(ChallengeCell));
+
+            var str = Encoding.ASCII.GetString(challengeCell.Challenge);
         }
     }
 }

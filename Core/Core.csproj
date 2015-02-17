@@ -71,8 +71,10 @@
     <Compile Include="Protocol\CellCommands.cs" />
     <Compile Include="Protocol\CellsParser.cs" />
     <Compile Include="Protocol\CertsCell.cs" />
+    <Compile Include="Protocol\ChallengeCell.cs" />
     <Compile Include="Protocol\CreateCell.cs" />
     <Compile Include="Protocol\VersionsCell.cs" />
+    <Compile Include="Utils\ByteHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
