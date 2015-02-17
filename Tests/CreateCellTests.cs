@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Core.Protocol;
 using NUnit.Framework;
 using Org.BouncyCastle.Crypto.Tls;
@@ -11,16 +12,15 @@ namespace Tests
     [TestFixture]
     public class CreateCellTests
     {
-        [Test]
+        [Test, Ignore]
         public void GenerateKey()
         {
             var rsaProvider = RSA.Create();
             var key = rsaProvider.ExportParameters(true);
             rsaProvider.ToXmlString(true);
-
         }
 
-        [Test]
+        [Test, Ignore]
         public void Test()
         {
             var routers = RouterDescriptotLoader.Load();
@@ -61,7 +61,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Test, Ignore]
         public void Test1()
         {
             const string response =
@@ -69,6 +69,10 @@ namespace Tests
             var responseBytes = Convert.FromBase64String(response);
 
             var result = CellsParser.ParseResponse(responseBytes);
+            var certcell = (CertsCell)result.FirstOrDefault(x => x.GetType() == typeof(CertsCell));
+
+            var cert = certcell.Certificates.First();
+            var x509 = new X509Certificate2(cert.CertBytes);
         }
     }
 }

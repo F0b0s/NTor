@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace Core.Protocol
@@ -24,23 +23,25 @@ namespace Core.Protocol
 
             while (currentIndex < response.Length)
             {
-                var cellId = BitConverter.ToInt16(response, currentIndex);
                 var command = response[currentIndex + 2];
 
                 var payloadLen = ReadUInt16(response, currentIndex + 3);
-                var payload = new byte[payloadLen];
-                Array.Copy(response, currentIndex + 5, payload, 0, payloadLen);
 
                 switch (command)
                 {
-                    case 7:
+                    case 7: 
+                        var payload = new byte[payloadLen];
+                        Array.Copy(response, currentIndex + 5, payload, 0, payloadLen);
                         result.Add(VersionsCell.Parse(payload));
                         break;
                     case 8:  //fix length
-                        result.Add(new VersionsCell(null));
+                        result.Add(new VersionsCell(new ushort[]{1}));
                         break;
                     case 129:
-                        result.Add(ParseCertCell(response, currentIndex + 5, payloadLen));
+                        var payload1 = new byte[payloadLen];
+                        Array.Copy(response, currentIndex + 5, payload1, 0, payloadLen);
+                        result.Add(CertsCell.Parse(payload1));
+                        //result.Add(ParseCertCell(response, currentIndex + 5, payloadLen));
                         break;
                     case 130:
                         result.Add(ParseChallengeCell(response, currentIndex + 5, payloadLen));
@@ -54,13 +55,6 @@ namespace Core.Protocol
             return result;
         }
 
-        private static Cell ParseNetInfoCell(byte[] certCellBytes, int index, int cellSize)
-        {
-            var timestamp = BitConverter.ToInt32(certCellBytes, index);
-
-            throw new NotImplementedException();
-        }
-
         private static Cell ParseChallengeCell(byte[] certCellBytes, int index, int cellSize)
         {
             var challenge = new byte[32];
@@ -72,31 +66,7 @@ namespace Core.Protocol
                 var method = ReadUInt16(certCellBytes, index + challenge.Length + 2 + 2 * i);
             }
 
-            throw new NotImplementedException();
-        }
-
-        private static Cell ParseCertCell(byte[] certCellBytes, int index, int cellSize)
-        {
-            var certCount = certCellBytes[index];
-            int currentindex = index + 1; // move to certificate
-            var certificates = new List<Certificate>();
-
-            for (int i = 0; i < certCount; i++)
-            {
-                var certType = certCellBytes[currentindex];
-                var certSize = ReadUInt16(certCellBytes, currentindex + 1);
-                var certBytes = new byte[certSize];
-                Array.Copy(certCellBytes, currentindex + 3, certBytes, 0, certSize);
-                currentindex += 3 + certSize;
-                var certificate = new Certificate
-                                  {
-                                      CertType = certType,
-                                      CertBytes = certBytes
-                                  };
-                certificates.Add(certificate);
-            }
-
-            return new CertsCell(certificates);
+            return new VersionsCell(new ushort[]{1});
         }
 
         private static short ReadUInt16(byte[] bytes, int index)
