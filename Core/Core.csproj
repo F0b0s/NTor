@@ -73,6 +73,7 @@
     <Compile Include="Protocol\CertsCell.cs" />
     <Compile Include="Protocol\ChallengeCell.cs" />
     <Compile Include="Protocol\CreateCell.cs" />
+    <Compile Include="Protocol\NetInfoCell.cs" />
     <Compile Include="Protocol\VersionsCell.cs" />
     <Compile Include="Utils\ByteHelper.cs" />
   </ItemGroup>

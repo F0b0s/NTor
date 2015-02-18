@@ -29,28 +29,37 @@ namespace Core.Protocol
 
                 switch (command)
                 {
+                    case 0:
+                        currentIndex = response.Length;
+                        break;
                     case 7: 
                         var payload = new byte[payloadLen];
                         Array.Copy(response, currentIndex + 5, payload, 0, payloadLen);
                         result.Add(VersionsCell.Parse(payload));
+                        currentIndex += 5 + payloadLen;
                         break;
                     case 8:  //fix length
-                        result.Add(new VersionsCell(new ushort[]{1}));
+                        var netInfoCell = NetInfoCell.Parse(response, currentIndex);
+                        result.Add(netInfoCell);
+                        currentIndex += netInfoCell.ToArray().Length;
                         break;
                     case 129:
                         var payload1 = new byte[payloadLen];
                         Array.Copy(response, currentIndex + 5, payload1, 0, payloadLen);
                         result.Add(CertsCell.Parse(payload1));
+                        currentIndex += 5 + payloadLen;
                         break;
                     case 130:
                         var payload2 = new byte[payloadLen];
                         Array.Copy(response, currentIndex + 5, payload2, 0, payloadLen);
                         result.Add(ChallengeCell.Parse(payload2));
+                        currentIndex += 5 + payloadLen;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(command.ToString(CultureInfo.InvariantCulture));
                 }
-                currentIndex += 5 + payloadLen;
+                
+                
             }
 
             return result;
